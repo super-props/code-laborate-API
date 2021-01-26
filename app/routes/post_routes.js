@@ -29,7 +29,6 @@ router.post('/posts', requireToken, (req, res, next) => {
     .catch(next)
 })
 
-<<<<<<< HEAD
 // INDEX ALL
 // GET /posts
 router.get('/posts', requireToken, (req, res, next) => {
@@ -98,5 +97,4 @@ router.delete('/posts/:id', requireToken, (req, res, next) => {
     .catch(next)
 })
 
->>>>>>> 76b820c (Added Update Post Route)
 module.exports = router
