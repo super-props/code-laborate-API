@@ -32,7 +32,7 @@ router.post('/comments', requireToken, (req, res, next) => {
     .then(post => res.status(201).json({ post }))
 
 // UPDATE comment
-// PATCH /posts/:id
+// PATCH /posts/:commentId
 
 router.patch('/posts/:commentId', requireToken, (req, res, next) => {
   // extract commentID
@@ -44,6 +44,9 @@ router.patch('/posts/:commentId', requireToken, (req, res, next) => {
   // extract Post Id
   const postId = req.body.comment.postId
 
+  delete req.body.post.owner
+  delete req.body.comment.owner
+
   Post.findById(postId)
     .then(handle404)
     .then(post => {
@@ -54,6 +57,25 @@ router.patch('/posts/:commentId', requireToken, (req, res, next) => {
     })
     .then(post => res.status(201).json({ post: post }))
 >>>>>>>
+    .catch(next)
+})
+
+// DELETE comment
+// DELETE /posts/:commentId
+
+router.delete('/posts/:commentId', requireToken, (req, res, next) => {
+  const commentId = req.params.commentId
+  // extract the restaurant Id from req data
+  const postID = req.body.review.postID
+
+  Post.findById(postID)
+    .then(handle404)
+    .then(post => {
+      post.comment.id(commentId).remove()
+
+      return post.save()
+    })
+    .then(() => res.sendStatus(204))
     .catch(next)
 })
 
