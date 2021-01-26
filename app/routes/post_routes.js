@@ -65,4 +65,36 @@ router.get('/posts/:id', requireToken, (req, res, next) => {
     .catch(next)
 })
 
+// UPDATE post
+// PATCH /posts/:id
+router.patch('/posts/:id', requireToken, removeBlanks, (req, res, next) => {
+  const postData = req.body.post
+  delete postData.owner
+  const postId = req.params.id
+  const userId = req.user._id
+  Post.findOne({_id: postId, owner: userId})
+    .then(handle404)
+    .then(post => {
+      requireOwnership(req, post)
+      return post.updateOne(postData)
+    })
+    .then(() => res.sendStatus(204))
+    .catch(next)
+})
+
+// DELETE post
+// DELETE /posts/:id
+router.delete('/posts/:id', requireToken, (req, res, next) => {
+  const postId = req.params.id
+  const userId = req.user._id
+  Post.findOne({_id: postId, owner: userId})
+    .then(handle404)
+    .then(post => {
+      requireOwnership(req, post)
+      return post.deleteOne()
+    })
+    .then(() => res.sendStatus(204))
+    .catch(next)
+})
+
 module.exports = router
