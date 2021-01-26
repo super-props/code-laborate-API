@@ -83,6 +83,20 @@ router.patch('/posts/:id', requireToken, removeBlanks, (req, res, next) => {
     .catch(next)
 })
 
+// DELETE post
+// DELETE /posts/:id
+router.delete('/posts/:id', requireToken, (req, res, next) => {
+  const postId = req.params.id
+  const userId = req.user._id
+  Post.findOne({_id: postId, owner: userId})
+    .then(handle404)
+    .then(post => {
+      requireOwnership(req, post)
+      return post.deleteOne()
+    })
+    .then(() => res.sendStatus(204))
+    .catch(next)
+})
 
 >>>>>>> 76b820c (Added Update Post Route)
 module.exports = router
