@@ -55,12 +55,12 @@ router.get('/posts/user', requireToken, (req, res, next) => {
 // GET /post/:id
 router.get('/posts/:id', requireToken, (req, res, next) => {
   const id = req.params.id
-  Post.findOne({ _id: id, owner: req.user._id })
+  Post.findOne({ _id: id })
     .populate('owner', '_id email')
     .populate('comments')
     .then(handle404)
     .then(post => {
-      requireOwnership(req, post)
+      // requireOwnership(req, post)
       res.status(200).json({ post: post })
     })
     .catch(next)
