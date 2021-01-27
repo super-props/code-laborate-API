@@ -10,9 +10,6 @@ const removeBlanks = require('../../lib/remove_blank_fields')
 
 const Post = require('../models/post')
 
-// passing this as a second argument to `router.<verb>` will make it
-// so that a token MUST be passed for that route to be available
-// it will also set `res.user`
 const requireToken = passport.authenticate('bearer', { session: false })
 
 // instantiate a router (mini app that only handles routes)
@@ -32,6 +29,56 @@ router.post('/comments', requireToken, (req, res, next) => {
       return post.save()
     })
     .then(post => res.status(201).json({ post }))
+})
+
+// UPDATE comment
+// PATCH /comments/:commentId
+
+router.patch('/comments/:commentId', requireToken, (req, res, next) => {
+  // extract commentID
+  const commentId = req.params.commentId
+
+  // extract comment data
+  const commentData = req.body.comment
+
+  // extract Post Id
+  const postId = req.body.comment.postId
+
+  // delete req.body.comment.owner
+
+  Post.findById(postId)
+    .then(handle404)
+    .then(post => {
+      const comment = post.comments.id(commentId)
+
+      comment.set(commentData)
+      return post.save()
+    })
+    .then(post => res.status(201).json({ post: post }))
+    .catch(next)
+})
+
+// DELETE comment
+// DELETE /comments/:commentId
+
+router.delete('/comments/:commentId', requireToken, (req, res, next) => {
+  const commentId = req.params.commentId
+
+  // const commentData = req.body.comment
+
+  // extract post id
+  const postId = req.body.comment.postId
+
+  Post.findById(postId)
+    .then(handle404)
+    .then(post => {
+      const comment = post.comments.id(commentId)
+
+      comment.remove()
+
+      return post.save()
+    })
+    .then(post => res.status(201).json({ post: post }))
     .catch(next)
 })
 
