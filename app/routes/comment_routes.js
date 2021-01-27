@@ -64,7 +64,7 @@ router.patch('/comments/:commentId', requireToken, (req, res, next) => {
 router.delete('/comments/:commentId', requireToken, (req, res, next) => {
   const commentId = req.params.commentId
 
-  const commentData = req.body.comment
+  // const commentData = req.body.comment
 
   // extract post id
   const postId = req.body.comment.postId
@@ -75,8 +75,6 @@ router.delete('/comments/:commentId', requireToken, (req, res, next) => {
       const comment = post.comments.id(commentId)
 
       comment.remove()
-
-      comment.set(commentData)
 
       return post.save()
     })
