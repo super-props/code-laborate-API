@@ -15,7 +15,6 @@ const requireToken = passport.authenticate('bearer', { session: false })
 // instantiate a router (mini app that only handles routes)
 const router = express.Router()
 
-<<<<<<<
 // CREATE comment
 // POST /comments
 router.post('/comments', requireToken, (req, res, next) => {
@@ -30,11 +29,12 @@ router.post('/comments', requireToken, (req, res, next) => {
       return post.save()
     })
     .then(post => res.status(201).json({ post }))
+})
 
 // UPDATE comment
-// PATCH /posts/:commentId
+// PATCH /comments/:commentId
 
-router.patch('/posts/:commentId', requireToken, (req, res, next) => {
+router.patch('/comments/:commentId', requireToken, (req, res, next) => {
   // extract commentID
   const commentId = req.params.commentId
 
@@ -44,38 +44,43 @@ router.patch('/posts/:commentId', requireToken, (req, res, next) => {
   // extract Post Id
   const postId = req.body.comment.postId
 
-  delete req.body.post.owner
-  delete req.body.comment.owner
+  // delete req.body.comment.owner
 
   Post.findById(postId)
     .then(handle404)
     .then(post => {
-      const comment = post.comment.id(commentId)
+      const comment = post.comments.id(commentId)
 
       comment.set(commentData)
       return post.save()
     })
     .then(post => res.status(201).json({ post: post }))
->>>>>>>
     .catch(next)
 })
 
 // DELETE comment
-// DELETE /posts/:commentId
+// DELETE /comments/:commentId
 
-router.delete('/posts/:commentId', requireToken, (req, res, next) => {
+router.delete('/comments/:commentId', requireToken, (req, res, next) => {
   const commentId = req.params.commentId
-  // extract the restaurant Id from req data
-  const postID = req.body.review.postID
 
-  Post.findById(postID)
+  const commentData = req.body.comment
+
+  // extract post id
+  const postId = req.body.comment.postId
+
+  Post.findById(postId)
     .then(handle404)
     .then(post => {
-      post.comment.id(commentId).remove()
+      const comment = post.comments.id(commentId)
+
+      comment.remove()
+
+      comment.set(commentData)
 
       return post.save()
     })
-    .then(() => res.sendStatus(204))
+    .then(post => res.status(201).json({ post: post }))
     .catch(next)
 })
 
