@@ -1,4 +1,4 @@
-# Project 3: Code-laborate (Front-End)
+# Project 3: Code-laborate (API)
 
 
 ## Other Important Links & Resources Used:
