@@ -6,7 +6,7 @@ const passport = require('passport')
 const errors = require('../../lib/custom_errors')
 const handle404 = errors.handle404
 const requireOwnership = errors.requireOwnership
-const removeBlanks = require('../../lib/remove_blank_fields')
+// const removeBlanks = require('../../lib/remove_blank_fields')
 
 const Post = require('../models/post')
 
@@ -49,6 +49,7 @@ router.patch('/comments/:commentId', requireToken, (req, res, next) => {
   Post.findById(postId)
     .then(handle404)
     .then(post => {
+      requireOwnership(req, post)
       const comment = post.comments.id(commentId)
 
       comment.set(commentData)
@@ -72,6 +73,7 @@ router.delete('/comments/:commentId', requireToken, (req, res, next) => {
   Post.findById(postId)
     .then(handle404)
     .then(post => {
+      requireOwnership(req, post)
       const comment = post.comments.id(commentId)
 
       comment.remove()
