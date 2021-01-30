@@ -28,7 +28,12 @@ router.post('/comments', requireToken, (req, res, next) => {
       post.comments.push(commentData)
       return post.save()
     })
-    .then(post => res.status(201).json({ post }))
+    .then(post => {
+      const lastCommentPosition = (post.comments.length - 1)
+      const newComment = post.comments[lastCommentPosition]
+      return newComment
+    })
+    .then((newComment) => res.status(201).json({ newComment }))
 })
 
 // UPDATE comment
