@@ -22,6 +22,7 @@ router.post('/comments', requireToken, (req, res, next) => {
   commentData.owner = req.user._id
   const postId = commentData.postId
   Post.findById(postId)
+    .populate('owner', '_id email')
     .populate('comments', 'owner content')
     .then(handle404)
     .then(post => {
@@ -52,6 +53,7 @@ router.patch('/comments/:commentId', requireToken, (req, res, next) => {
   // delete req.body.comment.owner
 
   Post.findById(postId)
+    .populate('owner', '_id email')
     .then(handle404)
     .then(post => {
       requireOwnership(req, post)
@@ -60,9 +62,16 @@ router.patch('/comments/:commentId', requireToken, (req, res, next) => {
       comment.set(commentData)
       return post.save()
     })
-    .then(post => res.status(201).json({ post: post }))
-    .catch(next)
+    .then(post => {
+      const lastCommentPosition = (post.comments.length - 1)
+      const updatedComment = post.comments[lastCommentPosition]
+      return updatedComment
+    })
+    .then((updatedComment) => res.status(201).json({ updatedComment }))
 })
+//     .then(post => res.status(201).json({ post: post }))
+//     .catch(next)
+// })
 
 // DELETE comment
 // DELETE /comments/:commentId
