@@ -19,11 +19,11 @@ const router = express.Router()
 // POST /comments
 router.post('/comments', requireToken, (req, res, next) => {
   const commentData = req.body.comment
-  commentData.owner = req.user._id
+  commentData.owner = req.user
   const postId = commentData.postId
   Post.findById(postId)
     .populate('owner', '_id email')
-    .populate('comments', 'owner content')
+    // .populate('comments', 'owner content')
     .then(handle404)
     .then(post => {
       post.comments.push(commentData)
