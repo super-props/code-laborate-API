@@ -62,6 +62,7 @@ This Repository is for the API end of the Code-Laborate application! Code-Labora
 - Passport
 - bcrypt
 - crypto
+- Heroku
 
 ## Unsolved Problems:
 - Checkbox for rather or not the issue has been resolved
